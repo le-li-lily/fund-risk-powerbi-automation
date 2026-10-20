@@ -1,0 +1,40 @@
+{
+  "run": {"as_of_date": "2026-10-20", "base_currency": "USD", "random_seed": 42},
+  "input": {
+    "mode": "simulate",
+    "positions_csv": "data/raw/positions.csv", "sensitivities_csv": "data/raw/instrument_sensitivities.csv",
+    "returns_csv": "data/raw/factor_returns.csv", "limits_csv": "data/raw/fund_limits.csv",
+    "controls_csv": "data/raw/source_controls.csv",
+    "column_mapping": {
+      "as_of_date": "as_of_date", "fund_id": "fund_id", "fund_name": "fund_name",
+      "portfolio_id": "portfolio_id", "instrument_id": "instrument_id", "asset_class": "asset_class",
+      "currency": "currency", "market_value_usd": "market_value_usd"
+    },
+    "sql": {
+      "connection_env": "RISK_SQL_CONNECTION", "query_file": "sql/positions.sql",
+      "sensitivity_query_file": "sql/sensitivities.sql", "limit_query_file": "sql/fund_limits.sql",
+      "control_query_file": "sql/source_controls.sql"
+    }
+  },
+  "simulation": {"instrument_count": 1200, "reporting_days": 65, "returns_history_days": 320},
+  "risk": {
+    "var_method": "parametric",
+    "confidence_level": 0.99,
+    "holding_period_days": 1,
+    "covariance_lookback_days": 250,
+    "stress_horizon_days": 10,
+    "stressed_volatility_multiplier": 1.7
+  },
+  "stress_scenarios": [
+    {"scenario_id": "EQ_DOWN_20", "scenario_name": "Global equity down 20%", "equity": -0.20, "rates": 0.00, "fx": 0.00, "credit": 0.00, "commodity": 0.00},
+    {"scenario_id": "RATES_UP_100", "scenario_name": "Rates up 100bp", "equity": 0.00, "rates": -0.010, "fx": 0.00, "credit": -0.005, "commodity": 0.00},
+    {"scenario_id": "USD_UP_10", "scenario_name": "USD up 10%", "equity": 0.00, "rates": 0.00, "fx": -0.10, "credit": 0.00, "commodity": 0.00}
+  ],
+  "data_quality": {
+    "fail_on_error": true,
+    "require_source_controls": true,
+    "reconciliation_tolerance_usd": 1.00,
+    "max_quarantine_pct": 0.001
+  },
+  "output": {"directory": "outputs", "published_directory": "published", "archive_directory": "archive"}
+}
